@@ -9,21 +9,24 @@ class Widget : public QWidget
     Q_OBJECT
 private:
     int chessdata[20][20];
-    QString bgFilename;
-    int gridwidth,gridheight,x0,y0;
+
+
 protected:
-    void paintEvent(QPaintEvent *);
-    void resizeEvent(QResizeEvent *);
-    void setdata();
-    void mousePressEvent(QMouseEvent *e);
+    void paintEvent(QPaintEvent *);//绘制棋盘、棋子
+
+    void setdata();//数据初始化
+
+
+    void mouseReleaseEvent(QMouseEvent *);//鼠标事件
 signals:
-    void SignalSendChessData(int i,int j);
+    void SignalSendChessData(int i,int j);//发送信号
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
-    enum chesstype{empty=0,white,black};
-    void setchessstatus(void * p);
-    void changebg(QString);
+    enum chesstype{empty=0,white,black};//棋子类型
+
+    void setchessstatus(void * p);//同步数组
+
 
 };
 #endif // WIDGET_H

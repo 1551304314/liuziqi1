@@ -6,79 +6,68 @@ Widget::Widget(QWidget *parent)
 {
     setdata();
 }
+//数组初始化
 void Widget::setdata(){
-    bgFilename.clear();
-    bgFilename="4.jpg";
-    for (int i=0;i<20;i++) {
-        for (int j=0;j<20;j++) {
-            chessdata[i][j]=0;
-        }
+    resize(840, 840);
+    memset(chessdata, 0, 20 * 20 * sizeof(int));
 
-    }
 
 }
+//绘制棋盘、棋子
 void Widget::paintEvent(QPaintEvent *)
 {
-    //绘制背景图
-    QPainter painter(this);
-    QRect rec(QPoint(0,0),QPoint(this->width(),this->height()));
-    QPixmap pix(bgFilename);
-    painter.drawPixmap(rec,pix);
-    //设置画线
-    QPen pen;
-    pen.setColor(Qt::yellow);
-    pen.setStyle(Qt::SolidLine);
-    pen.setWidth(4);
-    painter.setPen(pen);
-    //绘制棋盘
-    for(int i=0;i<=20;i++)
-        painter.drawLine(x0,y0+i*gridheight,21*gridwidth,y0+i*gridheight);
-    for(int j=0;j<=20;j++)
-        painter.drawLine(x0+j*gridwidth,y0,x0+j*gridwidth,21*gridheight);
-    //绘制棋子
-    QString chessFilename;
-    for(int i=0;i<20;i++){
-        for(int j=0;j<20;j++){
-            if(chessdata[i][j]==white){
-                chessFilename="1.png";
-            }
-            else if(chessdata[i][j]==black){
-                chessFilename="2.png";
-            }
-            else {
-                chessFilename.clear();
-                continue;
-            }
-    painter.drawPixmap(x0+i*gridwidth,y0+j*gridheight,gridwidth,gridheight,chessFilename);
-}
-    }
-}
-void Widget::resizeEvent(QResizeEvent *){
-    gridwidth=size().width()/22;
-    gridheight=size().height()/22;
-    x0=gridwidth;
-    y0=gridheight;
-}
-void Widget::mousePressEvent(QMouseEvent *e){
-    int x=e->x();
-    int y=e->y();
-    if(((x>=x0&&(x<=x0+20*gridwidth))&&(y>=y0&&(y<=y0+20*gridheight)))&&e->button()==Qt::LeftButton){
-        int i=0,j=0;
-        i=(x-x0)/gridwidth;
-        j=(y-y0)/gridheight;
-        SignalSendChessData(i,j);
-
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    int i, j;
+    for (i = 0; i < 21; i++)
+    {
+        p.drawLine(20, 20 + i * 40, 820, 20 + i * 40);
+        p.drawLine(20 + i * 40, 20, 20 + i * 40, 820);
     }
 
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    for (i = 0; i < 20; i++)
+    {
+        for (j = 0; j < 20; j++)
+        {
+            if (chessdata[i][j] == black)
+            {
+                brush.setColor(Qt::black);
+                p.setBrush(brush);
+                p.drawEllipse(QPoint((i + 1) * 40, (j + 1) * 40), 20, 20);
+            }
+            else if (chessdata[i][j] == white)
+            {
+                brush.setColor(Qt::white);
+                p.setBrush(brush);
+                p.drawEllipse(QPoint((i + 1) * 40, (j + 1) * 40), 20, 20);
+            }
+        }
+    }
 }
+//获取鼠标坐标
+void Widget::mouseReleaseEvent(QMouseEvent *e)
+{
+    int x, y;
+    if(e->x() >= 20 && e->x() < 820 && e->y() >= 20 && e->y() < 820)
+    {
+        x = (e->x() - 20) / 40;
+        y = (e->y() - 20) / 40;
+
+        SignalSendChessData(x,y);
+
+    }
+    update();
+}
+
+//传送棋盘数据
 void Widget::setchessstatus(void *p){
     memcpy(chessdata,p,sizeof(int)*20*20);
     this->update();
 }
 
-void Widget::changebg(QString a){
-    bgFilename=a;
-}
+
 Widget::~Widget()
 {
 }
