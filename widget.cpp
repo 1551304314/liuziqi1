@@ -36,12 +36,14 @@ void Widget::paintEvent(QPaintEvent *)
                 brush.setColor(Qt::black);
                 p.setBrush(brush);
                 p.drawEllipse(QPoint((i + 1) * 40, (j + 1) * 40), 20, 20);
+                update();
             }
             else if (chessdata[i][j] == white)
             {
                 brush.setColor(Qt::white);
                 p.setBrush(brush);
                 p.drawEllipse(QPoint((i + 1) * 40, (j + 1) * 40), 20, 20);
+                update();
             }
         }
     }
@@ -49,16 +51,17 @@ void Widget::paintEvent(QPaintEvent *)
 //获取鼠标坐标
 void Widget::mouseReleaseEvent(QMouseEvent *e)
 {
-    int x, y;
+    int x , y;
     if(e->x() >= 20 && e->x() < 820 && e->y() >= 20 && e->y() < 820)
     {
         x = (e->x() - 20) / 40;
         y = (e->y() - 20) / 40;
 
         SignalSendChessData(x,y);
-
     }
     update();
+
+
 }
 
 //传送棋盘数据

@@ -10,7 +10,6 @@ class Widget : public QWidget
 private:
     int chessdata[20][20];
 
-
 protected:
     void paintEvent(QPaintEvent *);//绘制棋盘、棋子
 
@@ -23,8 +22,7 @@ signals:
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
-    enum chesstype{empty=0,white,black};//棋子类型
-
+    enum chesstype{empty=0,white,black=-1};//棋子类型
     void setchessstatus(void * p);//同步数组
 
 

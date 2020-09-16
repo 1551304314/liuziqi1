@@ -55,6 +55,9 @@ private slots:
     void on_btn_pvp_clicked();//人人对战按钮
     void doProcesschessdata(int i,int j);//数据处理核心
     void on_restartbtn_clicked();//重新开始按钮
+    void on_btn_pvc_clicked();
+
+    void on_btn_cvc_clicked();
 
 private:
     Ui::chessForm *ui;
@@ -63,14 +66,20 @@ private:
     void Init();//数据初始化
     void roleinit(const QString whitefilename,const QString blackfilename);//下棋方初始化
     void setrole(Widget::chesstype currentrole);//设置下棋方
-    Widget::chesstype currentrole;
-    Widget::chesstype firstrole = Widget::black;
+    Widget::chesstype currentrole;//当前棋色
+    Widget::chesstype firstrole = Widget::black;//先手
     void setfirstrole(Widget::chesstype firstrole);//保存先手
     void setchessinit();//棋盘初始化
     void rolechange();//交替下棋
     int  judge(int,int,Widget::chesstype);//落子判断
-
-
+    void actionByAI(int &clickRow, int &clickCol); // 机器执行下棋
+    std::vector<std::vector<int>> scoreMapVec; // 存储各个点位的评分情况，作为AI下棋依据
+    enum playertype{pvp,pvc,nvn,cvc};
+    playertype currentplayer;//所选游戏模式
+    bool playerFlag;//AI棋色
+    void calculateScore();//评分算法
+    void updatechessdata(int x, int y); // 每次落子后更新游戏棋盘
+    void updatechessdata1(int x,int y);
 
 
 };
