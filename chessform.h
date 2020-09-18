@@ -14,11 +14,15 @@ class chessForm : public QWidget
     Q_OBJECT
 
 public:
+
+    int formchessdata[20][20];
+    void  virtual click(int,int);
     explicit chessForm(QWidget *parent = nullptr);
     ~chessForm();
     int isWin1(int ,int );//胜利判断1
     int isWin2(int ,int );//胜利判断2
     int isWin3(int ,int );
+    int isWin4(int ,int );
     int s1(int ,int);//胜利情况1-8
     int s2(int ,int);
     int s3(int ,int);
@@ -27,7 +31,6 @@ public:
     int s6(int ,int);
     int s7(int ,int);
     int s8(int ,int);
-
     int isDead();//和棋判断
     int lian61(int ,int);
     int lian62(int ,int);
@@ -47,6 +50,10 @@ public:
     int ban4(int,int);
     int ban5(int,int);//长连禁手
     int ban6(int,int);
+    int judge(int,int,Widget::chesstype);//落子判断
+    Widget::chesstype currentrole;//当前棋色
+    Widget * chess;
+    bool turn;//联网对战判断是否落子
 
 protected:
     void paintEvent(QPaintEvent *);//绘制ui背景
@@ -56,31 +63,26 @@ private slots:
     void doProcesschessdata(int i,int j);//数据处理核心
     void on_restartbtn_clicked();//重新开始按钮
     void on_btn_pvc_clicked();
-
     void on_btn_cvc_clicked();
+    void on_btn_nvn_clicked();
 
 private:
     Ui::chessForm *ui;
-    Widget * chess;
-    int formchessdata[20][20];
     void Init();//数据初始化
     void roleinit(const QString whitefilename,const QString blackfilename);//下棋方初始化
     void setrole(Widget::chesstype currentrole);//设置下棋方
-    Widget::chesstype currentrole;//当前棋色
     Widget::chesstype firstrole = Widget::black;//先手
     void setfirstrole(Widget::chesstype firstrole);//保存先手
     void setchessinit();//棋盘初始化
-    void rolechange();//交替下棋
-    int  judge(int,int,Widget::chesstype);//落子判断
+    void rolechange();//人人交替下棋
     void actionByAI(int &clickRow, int &clickCol); // 机器执行下棋
     std::vector<std::vector<int>> scoreMapVec; // 存储各个点位的评分情况，作为AI下棋依据
     enum playertype{pvp,pvc,nvn,cvc};
     playertype currentplayer;//所选游戏模式
     bool playerFlag;//AI棋色
     void calculateScore();//评分算法
-    void updatechessdata(int x, int y); // 每次落子后更新游戏棋盘
-    void updatechessdata1(int x,int y);
-
+    void updatechessdata(int x, int y); // 人机对战 每次落子后更新游戏棋盘
+    void updatechessdata1(int x,int y); // 机机对战
 
 };
 #endif // CHESSFORM_H

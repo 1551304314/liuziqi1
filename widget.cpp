@@ -1,6 +1,7 @@
 #include "widget.h"
 #include<QPaintEvent>
 #include<QMouseEvent>
+#include<QDebug>
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
@@ -56,7 +57,7 @@ void Widget::mouseReleaseEvent(QMouseEvent *e)
     {
         x = (e->x() - 20) / 40;
         y = (e->y() - 20) / 40;
-
+       // qDebug()<<x<<y;
         SignalSendChessData(x,y);
     }
     update();

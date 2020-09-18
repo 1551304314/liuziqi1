@@ -24,6 +24,7 @@ void chessForm::Init(){
     chess = new Widget();
     //信号连接
     connect(chess,SIGNAL(SignalSendChessData(int,int)),this,SLOT(doProcesschessdata(int,int)));
+    connect(chess,SIGNAL(SignalSendChessData(int,int)),this,SLOT(click(int,int)));
     //把棋盘显示到当前容器中
     ui->gridLayout->addWidget(chess);
     //初始化选择器
@@ -121,6 +122,27 @@ void chessForm::on_btn_cvc_clicked()
 
 }
 
+void chessForm::on_btn_nvn_clicked()
+{
+
+    currentplayer = nvn ;
+    //turn = 1;
+    if(ui->cbox_item->currentText().contains("白")){
+        setrole(Widget::white);
+        setfirstrole(Widget::white);
+        turn = 0;
+    }
+    else
+    {
+        setrole(Widget::black);
+        setfirstrole(Widget::black);
+        turn = 1;
+    }
+    setchessinit();
+    playerFlag=1;
+}
+
+
 
 //手动刷新棋盘
 void chessForm::on_restartbtn_clicked()
@@ -129,19 +151,21 @@ void chessForm::on_restartbtn_clicked()
     setchessinit();
     setrole(Widget::black);
 }
+//提供虚函数给netgame以传输坐标
+void chessForm::click(int x, int y){
+     qDebug()<<x<<y;
+     update();
+ }
 
 //数据处理***************核心区************
 void chessForm::doProcesschessdata(int i,int j){
     //qDebug()<<"i:"<<i<<"j:"<<j;
-
-
         if(currentplayer==pvp){
             int a = judge(i,j,currentrole);
             if(a){
             rolechange();
             chess->setchessstatus(formchessdata);
         isDead();
-
         if(firstrole==Widget::black)
            { int a = ban1(i,j);
              ban3(i,j);
@@ -203,7 +227,6 @@ void chessForm::doProcesschessdata(int i,int j){
         actionByAI(i,j);
         chess->setchessstatus(formchessdata);
         isDead();
-
         if(firstrole==Widget::black)
            { int a = ban1(i,j);
              ban3(i,j);
@@ -229,10 +252,21 @@ void chessForm::doProcesschessdata(int i,int j){
         }
 
     }
+        if(currentplayer==nvn){
+            int a = judge(i,j,currentrole);
+            if(a){
+             click(i,j);
+            chess->setchessstatus(formchessdata);
+            isDead();
+            isWin4(i,j);
+}
+
+        }
 }
 
 
 //*******************************
+//人机刷新
 void chessForm::updatechessdata(int x, int y)
 {
     if (playerFlag){
@@ -240,6 +274,7 @@ void chessForm::updatechessdata(int x, int y)
         update();
 }
 }
+//机机刷新
 void chessForm::updatechessdata1(int x, int y){
 
         if(playerFlag){
@@ -248,7 +283,7 @@ void chessForm::updatechessdata1(int x, int y){
         else formchessdata[x][y] = -1;
         playerFlag = !playerFlag;
     }
-
+//AI下棋
 void chessForm::actionByAI(int &clickRow, int &clickCol)
 {
     // 计算评分
@@ -499,7 +534,14 @@ void chessForm::rolechange(){
 //------------------逻辑区--------------------//
 //落子判断
 int  chessForm::judge(int i,int j,Widget::chesstype a){
-    if(!chessForm::formchessdata[i][j]){
+    if(currentplayer == nvn){
+        if(turn&&chessForm::formchessdata[i][j]==Widget::empty){
+            chessForm::formchessdata[i][j]=a;
+
+       return 1; }
+        return 0;
+    }
+    else if(!chessForm::formchessdata[i][j]){
         chessForm::formchessdata[i][j]=a;
     return 1;}
     return 0;
@@ -639,6 +681,19 @@ int chessForm::isWin3(int x, int y)
             msgbox.exec();
         }
          return 1;
+}
+int chessForm::isWin4(int x, int y)
+{
+    QMessageBox msg;
+    QString str;
+    if(formchessdata[x][y] == currentrole)
+        str="you win!";
+    if((s1(x,y)||s2(x,y)||s3(x,y)||s4(x,y)||s5(x,y)||s6(x,y)||s7(x,y)||s8(x,y)))
+    {
+            msg.setText(str);
+            msg.exec();
+    }
+    return 1;
 }
 
 //y方向活四
