@@ -32,7 +32,7 @@ public:
     int s7(int ,int);
     int s8(int ,int);
     int isDead();//和棋判断
-    int lian61(int ,int);
+    int lian61(int ,int);//七连
     int lian62(int ,int);
     int lian63(int ,int);
     int lian64(int ,int);
@@ -54,6 +54,7 @@ public:
     Widget::chesstype currentrole;//当前棋色
     Widget * chess;
     bool turn;//联网对战判断是否落子
+    Ui::chessForm *ui;
 
 protected:
     void paintEvent(QPaintEvent *);//绘制ui背景
@@ -67,7 +68,7 @@ private slots:
     void on_btn_nvn_clicked();
 
 private:
-    Ui::chessForm *ui;
+
     void Init();//数据初始化
     void roleinit(const QString whitefilename,const QString blackfilename);//下棋方初始化
     void setrole(Widget::chesstype currentrole);//设置下棋方

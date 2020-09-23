@@ -48,7 +48,7 @@ void chessForm::Init(){
    }
 
 }
-//黑白子初始化
+//黑白子显示初始化
 void chessForm::roleinit(const QString whitefilename, const QString blackfilename)
 {
     ui->label1->setPixmap(QPixmap(whitefilename));
@@ -139,7 +139,7 @@ void chessForm::on_btn_nvn_clicked()
         turn = 1;
     }
     setchessinit();
-    playerFlag=1;
+
 }
 
 
@@ -152,8 +152,8 @@ void chessForm::on_restartbtn_clicked()
     setrole(Widget::black);
 }
 //提供虚函数给netgame以传输坐标
-void chessForm::click(int x, int y){
-     qDebug()<<x<<y;
+void chessForm::click(int , int ){
+     //qDebug()<<x<<y;
      update();
  }
 
@@ -170,24 +170,31 @@ void chessForm::doProcesschessdata(int i,int j){
            { int a = ban1(i,j);
              ban3(i,j);
              int c = ban5(i,j);
-            if(a)
+            if(a){
                 isWin2(i,j);
-            else if(c)
+                 }
+            else if(c){
                 isWin3(i,j);
-            else
+            }
+             else{
                 isWin1(i,j);
+            }
         }
         else
         {
            int b = ban2(i,j);
             ban4(i,j);
            int d = ban6(i,j);
-            if(b)
+            if(b){
                 isWin2(i,j);
-            else if(d)
+            }
+            else if(d){
+
                 isWin3(i,j);
-            else
+            }
+            else{
                 isWin1(i,j);
+                }
         }}}
         else if (currentplayer == pvc){
             int a = judge(i,j,currentrole);
@@ -195,30 +202,8 @@ void chessForm::doProcesschessdata(int i,int j){
             actionByAI(i,j);
             chess->setchessstatus(formchessdata);
             isDead();
+            isWin1(i,j);
 
-            if(firstrole==Widget::black)
-               { int a = ban1(i,j);
-                 ban3(i,j);
-                 int c = ban5(i,j);
-                if(a)
-                    isWin2(i,j);
-                else if(c)
-                    isWin3(i,j);
-                else
-                    isWin1(i,j);
-            }
-            else
-            {
-               int b = ban2(i,j);
-                ban4(i,j);
-               int d = ban6(i,j);
-                if(b)
-                    isWin2(i,j);
-                else if(d)
-                    isWin3(i,j);
-                else
-                    isWin1(i,j);
-            }
         }
 
 }
@@ -227,30 +212,7 @@ void chessForm::doProcesschessdata(int i,int j){
         actionByAI(i,j);
         chess->setchessstatus(formchessdata);
         isDead();
-        if(firstrole==Widget::black)
-           { int a = ban1(i,j);
-             ban3(i,j);
-             int c = ban5(i,j);
-            if(a)
-                isWin2(i,j);
-            else if(c)
-                isWin3(i,j);
-            else
-                isWin1(i,j);
-        }
-        else
-        {
-           int b = ban2(i,j);
-            ban4(i,j);
-           int d = ban6(i,j);
-            if(b)
-                isWin2(i,j);
-            else if(d)
-                isWin3(i,j);
-            else
-                isWin1(i,j);
-        }
-
+        isWin1(i,j);
     }
         if(currentplayer==nvn){
             int a = judge(i,j,currentrole);
@@ -358,9 +320,9 @@ void chessForm::calculateScore()
                            // 原坐标不算
                            if (!(y == 0 && x == 0))
                            {
-                               // 每个方向延伸4个子
+                               // 每个方向延伸5个子
 
-                               // 对玩家白子评分（正反两个方向）
+                               // 对玩家黑子评分（正反两个方向）
                                for (int i = 1; i <= 5; i++)
                                {
                                    if (row + i * y >= 0 && row + i * y < 20 &&
@@ -423,12 +385,12 @@ void chessForm::calculateScore()
                                // 进行一次清空
                                emptyNum = 0;
 
-                               // 对AI黑子评分
+                               // 对AI白子评分
                                for (int i = 1; i <= 5; i++)
                                {
                                    if (row + i * y >= 0 && row + i * y < 20 &&
                                        col + i * x >= 0 && col + i * x < 20 &&
-                                       formchessdata[row + i * y][col + i * x] == -1) // 玩家的子
+                                       formchessdata[row + i * y][col + i * x] == 1) // AI的子
                                    {
                                        botNum++;
                                    }
@@ -524,7 +486,7 @@ void chessForm::rolechange(){
             ui->label1->setVisible(true);
             ui->label2->setVisible(false);
     }
-    else
+    else if(currentrole==Widget::black)
     {
             ui->label1->setVisible(false);
             ui->label2->setVisible(true);
@@ -592,6 +554,18 @@ int chessForm::ban4(int x, int y){
     }
     return 1;
 }
+//黑长连禁手
+int chessForm::ban5(int x, int y){
+
+    QMessageBox msgbox;
+    if((lian61(x,y)||lian62(x,y)||lian63(x,y)||lian64(x,y))&&formchessdata[x][y]==Widget::black)
+    {
+        msgbox.setText("this point is banned,you lost the game");
+        msgbox.exec();
+        return 1;
+    }
+    else return 0;
+}
 //白长连禁手
 int chessForm::ban6(int x, int y){
 
@@ -605,18 +579,7 @@ int chessForm::ban6(int x, int y){
     }
     else return 0;
 }
-//黑长连禁手
-int chessForm::ban5(int x, int y){
 
-    QMessageBox msgbox;
-    if((lian61(x,y)||lian62(x,y)||lian63(x,y)||lian64(x,y))&&formchessdata[x][y]==Widget::black)
-    {
-        msgbox.setText("this point is banned,you lost the game");
-        msgbox.exec();
-        return 1;
-    }
-    else return 0;
-}
 //和棋
 int  chessForm::isDead()
 {   int m=1;
@@ -682,6 +645,7 @@ int chessForm::isWin3(int x, int y)
         }
          return 1;
 }
+//网络对战胜利
 int chessForm::isWin4(int x, int y)
 {
     QMessageBox msg;
@@ -1031,7 +995,7 @@ int chessForm::s8(int x, int y){
 
     for(int i=0;i<5;i++)
     {
-        if(x + i < 20 &&
+        if(x + i + 1< 20 &&
                    y - i - 1>= 0 &&
                    x - 5 + i >= 0 &&
                    y + 5 - i < 20 &&
